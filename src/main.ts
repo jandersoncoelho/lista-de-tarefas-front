@@ -1,6 +1,12 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
+import { provideRouter, Route } from '@angular/router';
 import { AppComponent } from './app/app.component';
+import { TarefasComponent } from './app/pages/tarefas/tarefas.component';
+import { provideHttpClient } from '@angular/common/http';
 
-bootstrapApplication(AppComponent, appConfig)
-  .catch((err) => console.error(err));
+const routes: Route[] = [
+  { path: '', component: TarefasComponent },
+];
+bootstrapApplication(AppComponent, {
+  providers: [provideRouter(routes), provideHttpClient()]
+}).catch(err => console.error(err));
