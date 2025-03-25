@@ -1,7 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ViewChild } from '@angular/core';
 import { TarefaService, Tarefa } from '../../services/tarefa.service';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
+import { MatTable, MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -29,7 +29,7 @@ export class TarefasComponent {
   carregarTarefas() {
     this.tarefaService.getTarefas().subscribe(data => this.tarefas.set(data));
   }
-  
+
   editarTarefa(tarefa: Tarefa) {
     this.tarefaEditando = tarefa.id;
     this.tarefaEditandoDescricao = tarefa.descricao;
@@ -53,5 +53,21 @@ export class TarefasComponent {
 
   deletarTarefa(id: number) {
     this.tarefaService.deletarTarefa(id).subscribe(() => this.carregarTarefas());
+  }
+
+  adicionarTarefa(descricao: string) {
+    const novaTarefa: Tarefa = {
+      id: 0,
+      descricao: descricao,
+      concluida: false
+    };
+    this.tarefaService.adicionarTarefa(novaTarefa).subscribe(() => this.carregarTarefas());
+  }
+
+
+  @ViewChild(MatTable) table: MatTable<Tarefa> | undefined;
+
+  addData() {
+    this.adicionarTarefa("Nova Tarefa");
   }
 }
