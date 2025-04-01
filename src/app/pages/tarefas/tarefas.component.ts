@@ -1,4 +1,4 @@
-import { Component, signal, ViewChild } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { TarefaService, Tarefa } from '../../services/tarefa.service';
 import { CommonModule } from '@angular/common';
 import { MatTable, MatTableModule } from '@angular/material/table';
@@ -6,11 +6,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { AddTarefaDialogComponent } from '../../dialogs/add-tarefa-dialog/add-tarefa-dialog.component';
 
 @Component({
   selector: 'app-tarefas',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatCheckboxModule, FormsModule],
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatCheckboxModule, FormsModule, MatDialogModule],
   templateUrl: './tarefas.component.html',
   styleUrl: './tarefas.component.scss'
 })
@@ -20,14 +22,14 @@ export class TarefasComponent {
   tarefaEditando: number | null = null;
   tarefaEditandoDescricao: string = '';
 
-  constructor(private tarefaService: TarefaService) {}
+  constructor(private tarefaService: TarefaService, private dialog: MatDialog) {}
 
   ngOnInit() {
     this.carregarTarefas();
   }
 
   carregarTarefas() {
-    this.tarefaService.getTarefas().subscribe(data => this.tarefas.set(data));
+    this.tarefaService.getTarefas().subscribe(tarefas => this.tarefas.set(tarefas));
   }
 
   editarTarefa(tarefa: Tarefa) {
@@ -55,19 +57,19 @@ export class TarefasComponent {
     this.tarefaService.deletarTarefa(id).subscribe(() => this.carregarTarefas());
   }
 
-  adicionarTarefa(descricao: string) {
-    const novaTarefa: Tarefa = {
-      id: 0,
-      descricao: descricao,
-      concluida: false
-    };
-    this.tarefaService.adicionarTarefa(novaTarefa).subscribe(() => this.carregarTarefas());
-  }
+  adicionarTarefa() {
+    const dialogRef = this.dialog.open(AddTarefaDialogComponent, {
+      width: '400px',
+      height: '300px',
+    });
 
 
-  @ViewChild(MatTable) table: MatTable<Tarefa> | undefined;
-
-  addData() {
-    this.adicionarTarefa("Nova Tarefa");
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.tarefaService.adicionarTarefa(result).subscribe(() => {
+          this.carregarTarefas();
+        });
+      }
+    });
   }
 }

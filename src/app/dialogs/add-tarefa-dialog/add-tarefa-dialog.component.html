@@ -1,0 +1,10 @@
+<h2>Adicionar Tarefa</h2>
+    <form (ngSubmit)="adicionar()"> <!-- Define o formulário e vincula ao método adicionar() -->
+      <label>
+        Descrição:
+        <input type="text" [(ngModel)]="descricao" name="descricao" required> <!-- Campo de entrada para a descrição da tarefa -->
+      </label>
+      <br>
+      <button type="submit">Adicionar</button> <!-- Botão para adicionar a tarefa -->
+      <button type="button" (click)="cancelar()">Cancelar</button> <!-- Botão para cancelar a operação -->
+    </form>
